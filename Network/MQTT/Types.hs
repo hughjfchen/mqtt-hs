@@ -129,6 +129,8 @@ data MessageBody (t :: MsgType) where
                    , keepAlive :: Word16
                    -- ^ Time (in seconds) after which a 'PingReq' is sent to the broker if
                    -- no regular message was sent. 0 means no limit.
+                   , ver :: String
+                   -- ^ Mqtt version 3.1 or 3.1.1
                    }                              -> MessageBody 'CONNECT
     ConnAck     :: { returnCode :: Word8 }        -> MessageBody 'CONNACK
     Publish     :: { topic :: Topic

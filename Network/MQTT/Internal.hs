@@ -138,6 +138,8 @@ data Config
         -- ^ The channel used by 'publish', 'subscribe', etc.
         , cInputBufferSize :: Int
         -- ^ Maximum number of bytes read from the network at once.
+        , cVer :: String
+        -- ^ Mqtt protocol version 3.1 or 3.1.1
         }
 
 -- | Tell the 'mainLoop' to send the given 'Message'.
@@ -265,7 +267,8 @@ mainLoop mqtt h waitTerminate sendSignal = do
                       (MqttText $ cClientID mqtt)
                       (MqttText <$> cUsername mqtt)
                       (MqttText <$> cPassword mqtt)
-                      (fromMaybe 0 $ cKeepAlive mqtt))
+                      (fromMaybe 0 $ cKeepAlive mqtt)
+                      (cVer mqtt))
 
     msgDisconnect = Message (Header False NoConfirm False) Disconnect
 

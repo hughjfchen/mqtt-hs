@@ -89,8 +89,8 @@ putBody Disconnect         = mempty
 
 putConnect :: MessageBody 'CONNECT -> Builder
 putConnect Connect{..} = mconcat
-    [ putMqttText "MQIsdp" -- protocol
-    , word8 3 -- version
+    [ putMqttText prot -- protocol
+    , word8 ver' -- version
     , word8 flags
     , word16BE keepAlive
     , putMqttText clientID
@@ -100,6 +100,8 @@ putConnect Connect{..} = mconcat
     , maybePut password
     ]
   where
+    prot = if ver == "3.1" then "MQIsdp" else "MQTT"
+    ver' = if ver == "3.1" then 3 else 4
     maybePut = maybe mempty putMqttText
     flags = shiftL (toBit (isJust username)) 7 .|.
             shiftL (toBit (isJust password)) 6 .|.

@@ -33,6 +33,7 @@ module Network.MQTT
   , cPublished
   , cCommands
   , cInputBufferSize
+  , cVer
   -- * Subscribing and publishing
   , subscribe
   , unsubscribe
@@ -73,6 +74,7 @@ defaultConfig commands published = Config
     , cCommands         = commands
     , cPublished        = published
     , cInputBufferSize  = 0x1000
+    , cVer              = "3.1"
     }
 
 

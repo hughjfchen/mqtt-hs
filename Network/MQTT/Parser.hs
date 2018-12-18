@@ -110,7 +110,7 @@ mqttBody header msgType remaining = ctxt "mqttBody" $
 connect :: MessageParser (MessageBody 'CONNECT)
 connect = ctxt' "connect" $ do
     protocol
-    version
+    ver <- version
 
     flags <- anyWord8'
     let clean = testBit flags 1
@@ -132,17 +132,19 @@ connect = ctxt' "connect" $ do
 
     password <- ctxt' "Password" $ parseIf passwordFlag mqttText
 
-    return $ Connect clean mWill clientID username password keepAlive
+    return $ Connect clean mWill clientID username password keepAlive (if ver == 3 then "3.1" else "3.1.1")
   where
     protocol = ctxt' "protocol" $ do
       prot <- mqttText
-      when (prot /= "MQIsdp") $
+      unless (prot == "MQIsdp" || prot == "MQTT") $
         fail $ "Invalid protocol: " ++ show prot
 
     version = ctxt' "version" $ do
       version <- anyWord8'
-      when (version /= 3) $
+      unless (version == 3 || version == 4) $
         fail $ "Invalid version: " ++ show version
+
+      return version
 
     getClientID = ctxt' "getClientID" $ do
       before <- get
